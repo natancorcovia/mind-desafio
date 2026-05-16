@@ -84,7 +84,7 @@ function ArticleCard({
 
           <h3
             className={`font-bold text-sm leading-snug ${
-              featured ? "text-[#00d4d4]" : "text-white"
+              featured ? "text-white" : "text-white"
             }`}
           >
             {article.title}
