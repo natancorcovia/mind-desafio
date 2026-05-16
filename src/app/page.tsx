@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Clock, Eye, Heart, ArrowRight, Mail } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import Navbar from "@/components/Navbar";
 
 async function getArticles() {
   return prisma.article.findMany({
