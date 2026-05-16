@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Clock, Eye, Heart, ArrowRight, Mail } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import Navbar from "@/components/Navbar";
 
 async function getArticles() {
   return prisma.article.findMany({
@@ -16,7 +15,25 @@ async function getArticles() {
 
 type Article = Awaited<ReturnType<typeof getArticles>>[0];
 
-function ArticleBanner() {
+function ArticleBanner({
+  articleId,
+  hasBanner,
+}: {
+  articleId: string;
+  hasBanner: boolean;
+}) {
+  if (hasBanner) {
+    return (
+      <div className="w-full aspect-video overflow-hidden">
+        <img
+          src={`/api/articles/${articleId}/banner`}
+          alt="Banner"
+          className="w-full h-full object-cover"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full aspect-video bg-[#f4a89a] flex items-end p-4 overflow-hidden">
       <span className="font-serif text-4xl font-black text-black leading-none z-10">
@@ -49,7 +66,10 @@ function ArticleCard({
           featured ? "border-[#00d4d4]" : "border-[#1e2328]"
         }`}
       >
-        <ArticleBanner />
+        <ArticleBanner
+          articleId={article.id}
+          hasBanner={!!article.bannerData}
+        />
 
         <div className="p-4 flex flex-col flex-1 gap-3">
           <div className="flex items-center justify-between">
