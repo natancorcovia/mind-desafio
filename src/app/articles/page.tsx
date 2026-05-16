@@ -2,7 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Clock, Eye, Heart, Plus, Search, Filter } from "lucide-react";
+import {
+  Clock,
+  Eye,
+  Heart,
+  Plus,
+  Search,
+  Filter,
+  LayoutGrid,
+  LayoutList,
+} from "lucide-react";
 
 type Article = {
   id: string;
@@ -101,6 +110,76 @@ function ArticleCard({ article }: { article: Article }) {
   );
 }
 
+function ArticleListItem({ article }: { article: Article }) {
+  const date = new Date(article.publishedAt).toLocaleDateString("pt-BR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+
+  const wordCount = article.content.trim().split(/\s+/).length;
+  const readTime = Math.max(1, Math.ceil(wordCount / 200));
+
+  return (
+    <Link href={`/articles/${article.id}`}>
+      <div className="rounded-lg bg-[#131619] border border-[#1e2328] overflow-hidden cursor-pointer transition-all duration-200 hover:border-[#00d4d4]/60 flex gap-4 p-4">
+        {/* Thumb */}
+        <div className="w-32 h-24 shrink-0 rounded overflow-hidden">
+          {article.bannerData ? (
+            <img
+              src={`/api/articles/${article.id}/banner`}
+              alt="Banner"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="relative w-full h-full bg-[#f4a89a] flex items-end p-2 overflow-hidden">
+              <span className="font-serif text-lg font-black text-black leading-none z-10">
+                Lorem
+              </span>
+              <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-[#c5d9f0] rounded-tl-full" />
+            </div>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="flex flex-col flex-1 gap-2 justify-between">
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-2">
+              <span className="text-xs bg-[#1e2328] text-white/70 px-2 py-0.5 rounded">
+                Desenvolvimento web
+              </span>
+              <span className="text-xs text-white/30 flex items-center gap-1">
+                <Clock size={11} /> {date}
+              </span>
+            </div>
+            <h3 className="font-bold text-sm text-white leading-snug">
+              {article.title}
+            </h3>
+            <p className="text-xs text-white/50 line-clamp-2 leading-relaxed">
+              {article.content}
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-white/40">{article.author.name}</span>
+            <div className="flex items-center gap-3 text-white/30">
+              <span className="flex items-center gap-1 text-xs">
+                <Clock size={11} /> {readTime}min
+              </span>
+              <span className="flex items-center gap-1 text-xs">
+                <Eye size={11} /> 122
+              </span>
+              <span className="flex items-center gap-1 text-xs">
+                <Heart size={11} /> 1
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 const CATEGORIES = [
   "Todos",
   "Desenvolvimento web",
@@ -114,6 +193,7 @@ export default function ArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Todos");
+  const [layout, setLayout] = useState<"grid" | "list">("grid");
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState(false);
 
@@ -197,9 +277,33 @@ export default function ArticlesPage() {
               ))}
             </select>
           </div>
+
+          {/* Toggle layout */}
+          <div className="flex items-center border border-[#1e2328] rounded overflow-hidden">
+            <button
+              onClick={() => setLayout("grid")}
+              className={`p-2.5 transition-colors ${
+                layout === "grid"
+                  ? "bg-[#00d4d4] text-black"
+                  : "bg-[#131619] text-white/40 hover:text-white"
+              }`}
+            >
+              <LayoutGrid size={16} />
+            </button>
+            <button
+              onClick={() => setLayout("list")}
+              className={`p-2.5 transition-colors ${
+                layout === "list"
+                  ? "bg-[#00d4d4] text-black"
+                  : "bg-[#131619] text-white/40 hover:text-white"
+              }`}
+            >
+              <LayoutList size={16} />
+            </button>
+          </div>
         </div>
 
-        {/* Grid */}
+        {/* Grid / List */}
         {loading ? (
           <div className="py-32 text-center text-white/30 text-sm">
             Carregando artigos...
@@ -217,10 +321,20 @@ export default function ArticlesPage() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map((article) => (
-              <ArticleCard key={article.id} article={article} />
-            ))}
+          <div
+            className={
+              layout === "grid"
+                ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                : "flex flex-col gap-4"
+            }
+          >
+            {filtered.map((article) =>
+              layout === "grid" ? (
+                <ArticleCard key={article.id} article={article} />
+              ) : (
+                <ArticleListItem key={article.id} article={article} />
+              ),
+            )}
           </div>
         )}
       </div>
