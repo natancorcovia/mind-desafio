@@ -1,17 +1,25 @@
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-[#1e2328] bg-[#0d0d0d] mt-20">
+    <footer
+      className="border-t mt-20"
+      style={{ backgroundColor: "var(--bg)", borderColor: "var(--border)" }}
+    >
       <div className="mx-auto max-w-7xl px-6 py-12">
         <div className="flex justify-between items-start">
           {/* Brand */}
           <div className="max-w-xs">
-            <span className="font-mono text-xl font-bold text-white">
+            <span
+              className="font-mono text-xl font-bold"
+              style={{ color: "var(--text-primary)" }}
+            >
               &lt;M/&gt;
             </span>
-            <p className="mt-3 text-sm text-white/40 leading-relaxed">
+            <p
+              className="mt-3 text-sm leading-relaxed"
+              style={{ color: "var(--text-muted)" }}
+            >
               Seu portal de tecnologia com artigos, tutoriais e novidades do
               mundo tech.
             </p>
@@ -20,7 +28,10 @@ export default function Footer() {
           {/* Links */}
           <div className="flex gap-16">
             <div>
-              <h4 className="text-sm font-semibold text-white mb-4">
+              <h4
+                className="text-sm font-semibold mb-4"
+                style={{ color: "var(--text-primary)" }}
+              >
                 Navegação
               </h4>
               <ul className="space-y-2">
@@ -28,7 +39,8 @@ export default function Footer() {
                   <li key={item}>
                     <Link
                       href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-                      className="text-sm text-white/40 hover:text-white/80 transition-colors"
+                      className="text-sm transition-colors hover:opacity-80"
+                      style={{ color: "var(--text-muted)" }}
                     >
                       {item}
                     </Link>
@@ -38,25 +50,31 @@ export default function Footer() {
             </div>
 
             <div>
-              <h4 className="text-sm font-semibold text-white mb-4">
+              <h4
+                className="text-sm font-semibold mb-4"
+                style={{ color: "var(--text-primary)" }}
+              >
                 Redes Sociais
               </h4>
               <div className="flex gap-4">
                 <a
                   href="#"
-                  className="text-sm text-white/40 hover:text-white transition-colors"
+                  className="text-sm transition-colors hover:opacity-80"
+                  style={{ color: "var(--text-muted)" }}
                 >
                   LinkedIn
                 </a>
                 <a
                   href="#"
-                  className="text-sm text-white/40 hover:text-white transition-colors"
+                  className="text-sm transition-colors hover:opacity-80"
+                  style={{ color: "var(--text-muted)" }}
                 >
                   GitHub
                 </a>
                 <a
                   href="#"
-                  className="text-sm text-white/40 hover:text-white transition-colors"
+                  className="text-sm transition-colors hover:opacity-80"
+                  style={{ color: "var(--text-muted)" }}
                 >
                   X
                 </a>
@@ -65,8 +83,11 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-[#1e2328] pt-6 text-center">
-          <p className="text-xs text-white/30">
+        <div
+          className="mt-10 border-t pt-6 text-center"
+          style={{ borderColor: "var(--border)" }}
+        >
+          <p className="text-xs" style={{ color: "var(--text-muted)" }}>
             © 2025 TechBlog. Todos os direitos reservados.
           </p>
         </div>

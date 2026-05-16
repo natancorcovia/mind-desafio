@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Moon, LayoutDashboard, Settings, LogOut } from "lucide-react";
+import { Moon, Sun, LayoutDashboard, Settings, LogOut } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { useTheme } from "./ThemeProvider";
 
 function ProfileMenu({ name, email }: { name: string; email: string }) {
   const [open, setOpen] = useState(false);
@@ -21,36 +22,73 @@ function ProfileMenu({ name, email }: { name: string; email: string }) {
 
   return (
     <div className="relative" ref={ref}>
-      {/* Avatar */}
       <button
         onClick={() => setOpen(!open)}
-        className="w-8 h-8 rounded-full bg-[#1e2328] border border-[#00d4d4] flex items-center justify-center text-xs font-bold text-white hover:border-[#00bfbf] transition-colors"
+        className="w-8 h-8 rounded-full border flex items-center justify-center text-xs font-bold transition-colors"
+        style={{
+          backgroundColor: "var(--surface)",
+          borderColor: "var(--cyan)",
+          color: "var(--text-primary)",
+        }}
       >
         {name.charAt(0).toUpperCase()}
       </button>
 
-      {/* Dropdown */}
       {open && (
-        <div className="absolute right-0 top-10 w-56 bg-[#131619] border border-[#00d4d4]/40 rounded-lg overflow-hidden z-50 shadow-xl">
+        <div
+          className="absolute right-0 top-10 w-56 rounded-lg overflow-hidden z-50 shadow-xl border"
+          style={{
+            backgroundColor: "var(--surface)",
+            borderColor: "var(--cyan)",
+          }}
+        >
           {/* Perfil */}
-          <div className="flex items-center gap-3 p-4 border-b border-[#1e2328]">
-            <div className="w-10 h-10 rounded-full bg-[#1e2328] border border-[#00d4d4]/30 flex items-center justify-center text-sm font-bold text-white shrink-0">
+          <div
+            className="flex items-center gap-3 p-4 border-b"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <div
+              className="w-10 h-10 rounded-full border flex items-center justify-center text-sm font-bold shrink-0"
+              style={{
+                backgroundColor: "var(--surface-hover)",
+                borderColor: "var(--border)",
+                color: "var(--text-primary)",
+              }}
+            >
               {name.charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-sm font-medium text-white truncate">
+              <span
+                className="text-sm font-medium truncate"
+                style={{ color: "var(--text-primary)" }}
+              >
                 {name}
               </span>
-              <span className="text-xs text-white/40 truncate">{email}</span>
+              <span
+                className="text-xs truncate"
+                style={{ color: "var(--text-muted)" }}
+              >
+                {email}
+              </span>
             </div>
           </div>
 
           {/* Links */}
-          <div className="py-1 border-b border-[#1e2328]">
+          <div
+            className="py-1 border-b"
+            style={{ borderColor: "var(--border)" }}
+          >
             <Link
               href="/dashboard"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-[#1a1f24] transition-colors"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors"
+              style={{ color: "var(--text-secondary)" }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "var(--surface-hover)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "transparent")
+              }
             >
               <LayoutDashboard size={15} />
               Dashboard
@@ -58,7 +96,14 @@ function ProfileMenu({ name, email }: { name: string; email: string }) {
             <Link
               href="/settings"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-[#1a1f24] transition-colors"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors"
+              style={{ color: "var(--text-secondary)" }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "var(--surface-hover)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "transparent")
+              }
             >
               <Settings size={15} />
               Configurações
@@ -69,7 +114,14 @@ function ProfileMenu({ name, email }: { name: string; email: string }) {
           <div className="py-1">
             <button
               onClick={() => signOut()}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-[#1a1f24] transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors"
+              style={{ color: "var(--text-secondary)" }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "var(--surface-hover)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "transparent")
+              }
             >
               <LogOut size={15} />
               Sair
@@ -83,42 +135,55 @@ function ProfileMenu({ name, email }: { name: string; email: string }) {
 
 export default function Navbar() {
   const { data: session } = useSession();
+  const { theme, toggle } = useTheme();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#1e2328] bg-[#0d0d0d]/90 backdrop-blur-sm">
+    <header
+      className="fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-sm"
+      style={{
+        backgroundColor: "color-mix(in srgb, var(--bg) 90%, transparent)",
+        borderColor: "var(--border)",
+      }}
+    >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        {/* Logo */}
         <Link
           href="/"
-          className="font-mono text-xl font-bold text-white tracking-tight"
+          className="font-mono text-xl font-bold tracking-tight"
+          style={{ color: "var(--text-primary)" }}
         >
           &lt;M/&gt;
         </Link>
 
-        {/* Links + ações */}
         <div className="flex items-center gap-6">
           <Link
             href="/"
-            className="text-sm text-white/80 hover:text-white transition-colors"
+            className="text-sm transition-colors"
+            style={{ color: "var(--text-secondary)" }}
           >
             Home
           </Link>
           <Link
             href="/articles"
-            className="text-sm text-white/80 hover:text-white transition-colors"
+            className="text-sm transition-colors"
+            style={{ color: "var(--text-secondary)" }}
           >
             Artigos
           </Link>
 
-          <button className="text-white/60 hover:text-white transition-colors">
-            <Moon size={16} />
+          <button
+            onClick={toggle}
+            className="transition-colors"
+            style={{ color: "var(--text-muted)" }}
+          >
+            {theme === "dark" ? <Moon size={16} /> : <Sun size={16} />}
           </button>
 
           {session ? (
             <div className="flex items-center gap-4">
               <Link
                 href="/articles/new"
-                className="rounded bg-[#00d4d4] px-4 py-1.5 text-sm font-medium text-black hover:bg-[#00bfbf] transition-colors"
+                className="rounded px-4 py-1.5 text-sm font-medium transition-colors"
+                style={{ backgroundColor: "var(--cyan)", color: "#000" }}
               >
                 Escrever
               </Link>
@@ -131,13 +196,15 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               <Link
                 href="/login"
-                className="text-sm text-white/80 hover:text-white transition-colors"
+                className="text-sm transition-colors"
+                style={{ color: "var(--text-secondary)" }}
               >
                 Entrar
               </Link>
               <Link
                 href="/register"
-                className="rounded bg-[#00d4d4] px-4 py-1.5 text-sm font-medium text-black hover:bg-[#00bfbf] transition-colors"
+                className="rounded px-4 py-1.5 text-sm font-medium transition-colors"
+                style={{ backgroundColor: "var(--cyan)", color: "#000" }}
               >
                 Cadastrar
               </Link>

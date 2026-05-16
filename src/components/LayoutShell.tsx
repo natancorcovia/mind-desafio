@@ -4,35 +4,51 @@ import { usePathname } from "next/navigation";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Link from "next/link";
-import { Moon } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "./ThemeProvider";
 
 const authRoutes = ["/login", "/register"];
 
 function AuthNavbar() {
+  const { theme, toggle } = useTheme();
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-[#1e2328] bg-[#0d0d0d]/90 backdrop-blur-sm">
+    <header
+      className="fixed top-0 left-0 right-0 z-50 border-b backdrop-blur-sm"
+      style={{
+        backgroundColor: "color-mix(in srgb, var(--bg) 90%, transparent)",
+        borderColor: "var(--border)",
+      }}
+    >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link
           href="/"
-          className="font-mono text-xl font-bold text-white tracking-tight"
+          className="font-mono text-xl font-bold tracking-tight"
+          style={{ color: "var(--text-primary)" }}
         >
           &lt;M/&gt;
         </Link>
         <div className="flex items-center gap-6">
           <Link
             href="/"
-            className="text-sm text-white/80 hover:text-white transition-colors"
+            className="text-sm transition-colors"
+            style={{ color: "var(--text-secondary)" }}
           >
             Home
           </Link>
           <Link
             href="/articles"
-            className="text-sm text-white/80 hover:text-white transition-colors"
+            className="text-sm transition-colors"
+            style={{ color: "var(--text-secondary)" }}
           >
             Artigos
           </Link>
-          <button className="text-white/60 hover:text-white transition-colors">
-            <Moon size={16} />
+          <button
+            onClick={toggle}
+            className="transition-colors"
+            style={{ color: "var(--text-muted)" }}
+          >
+            {theme === "dark" ? <Moon size={16} /> : <Sun size={16} />}
           </button>
         </div>
       </nav>

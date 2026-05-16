@@ -5,11 +5,7 @@ import { prisma } from "@/lib/prisma";
 async function getArticles() {
   return prisma.article.findMany({
     orderBy: { publishedAt: "desc" },
-    include: {
-      author: {
-        select: { id: true, name: true },
-      },
-    },
+    include: { author: { select: { id: true, name: true } } },
   });
 }
 
@@ -33,7 +29,6 @@ function ArticleBanner({
       </div>
     );
   }
-
   return (
     <div className="relative w-full aspect-video bg-[#f4a89a] flex items-end p-4 overflow-hidden">
       <span className="font-serif text-4xl font-black text-black leading-none z-10">
@@ -62,41 +57,58 @@ function ArticleCard({
   return (
     <Link href={`/articles/${article.id}`} className="h-full">
       <div
-        className={`rounded-lg bg-[#131619] border overflow-hidden cursor-pointer transition-all duration-200 hover:border-[#00d4d4]/60 h-full flex flex-col ${
-          featured ? "border-[#1e2328]" : "border-[#1e2328]"
-        }`}
+        className="article-card rounded-lg overflow-hidden cursor-pointer transition-all duration-200 h-full flex flex-col border"
+        style={{
+          backgroundColor: "var(--surface)",
+          borderColor: featured ? "var(--cyan)" : "var(--border)",
+        }}
       >
         <ArticleBanner
           articleId={article.id}
           hasBanner={!!article.bannerData}
         />
-
         <div className="p-4 flex flex-col flex-1 gap-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs bg-[#1e2328] text-white/70 px-2 py-1 rounded">
+            <span
+              className="text-xs px-2 py-1 rounded"
+              style={{
+                backgroundColor: "var(--surface-hover)",
+                color: "var(--text-secondary)",
+              }}
+            >
               Desenvolvimento web
             </span>
-            <span className="text-xs text-white/40 flex items-center gap-1">
+            <span
+              className="text-xs flex items-center gap-1"
+              style={{ color: "var(--text-muted)" }}
+            >
               <Clock size={12} />
               {date}
             </span>
           </div>
-
           <h3
-            className={`font-bold text-sm leading-snug ${
-              featured ? "text-white" : "text-white"
-            }`}
+            className="font-bold text-sm leading-snug"
+            style={{ color: featured ? "var(--cyan)" : "var(--text-primary)" }}
           >
             {article.title}
           </h3>
-
-          <p className="text-xs text-white/50 leading-relaxed line-clamp-3 flex-1">
+          <p
+            className="text-xs leading-relaxed line-clamp-3 flex-1"
+            style={{ color: "var(--text-muted)" }}
+          >
             {article.content}
           </p>
-
-          <div className="flex items-center justify-between pt-1 border-t border-[#1e2328]">
-            <span className="text-xs text-white/40">{article.author.name}</span>
-            <div className="flex items-center gap-3 text-white/30">
+          <div
+            className="flex items-center justify-between pt-1 border-t"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+              {article.author.name}
+            </span>
+            <div
+              className="flex items-center gap-3"
+              style={{ color: "var(--text-muted)" }}
+            >
               <span className="flex items-center gap-1 text-xs">
                 <Clock size={11} /> 6min
               </span>
@@ -116,7 +128,10 @@ function ArticleCard({
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="col-span-3 py-16 text-center text-white/30 text-sm">
+    <div
+      className="col-span-3 py-16 text-center text-sm"
+      style={{ color: "var(--text-muted)" }}
+    >
       {message}
     </div>
   );
@@ -128,26 +143,39 @@ export default async function Home() {
   const recent = articles.slice(3, 7);
 
   return (
-    <div className="bg-[#0d0d0d] min-h-screen">
+    <div className="min-h-screen" style={{ backgroundColor: "var(--bg)" }}>
       {/* Hero */}
       <section className="flex flex-col items-center justify-center text-center px-6 py-32 min-h-[80vh]">
-        <h1 className="text-5xl font-bold text-white leading-tight max-w-xl">
-          Explore o Futuro da <span className="text-[#00d4d4]">Tecnologia</span>
+        <h1
+          className="text-5xl font-bold leading-tight max-w-xl"
+          style={{ color: "var(--text-primary)" }}
+        >
+          Explore o Futuro da{" "}
+          <span style={{ color: "var(--cyan)" }}>Tecnologia</span>
         </h1>
-        <p className="mt-6 text-lg text-white/50 max-w-md leading-relaxed">
+        <p
+          className="mt-6 text-lg max-w-md leading-relaxed"
+          style={{ color: "var(--text-muted)" }}
+        >
           Artigos sobre IA, desenvolvimento, DevOps e as últimas tendências
           tecnológicas
         </p>
         <div className="mt-10 flex flex-col gap-3 w-full max-w-sm">
           <Link
             href="/articles"
-            className="w-full py-3 bg-[#00d4d4] text-black font-medium rounded text-sm hover:bg-[#00bfbf] transition-colors"
+            className="w-full py-3 font-medium rounded text-sm transition-colors"
+            style={{ backgroundColor: "var(--cyan)", color: "#000" }}
           >
             Explorar Artigos
           </Link>
           <Link
             href="/register"
-            className="w-full py-3 border border-[#1e2328] text-white font-medium rounded text-sm hover:bg-[#131619] transition-colors"
+            className="w-full py-3 font-medium rounded text-sm transition-colors border"
+            style={{
+              borderColor: "var(--border)",
+              color: "var(--text-primary)",
+              backgroundColor: "transparent",
+            }}
           >
             Começar a Escrever
           </Link>
@@ -158,21 +186,24 @@ export default async function Home() {
       <section className="mx-auto max-w-7xl px-6 py-16">
         <div className="flex items-end justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-bold text-white">
+            <h2
+              className="text-2xl font-bold"
+              style={{ color: "var(--text-primary)" }}
+            >
               Artigos em Destaque
             </h2>
-            <p className="text-sm text-white/40 mt-1">
+            <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
               Os melhores conteúdos selecionados para você
             </p>
           </div>
           <Link
             href="/articles"
-            className="flex items-center gap-1 text-sm text-[#00d4d4] hover:text-[#00bfbf] transition-colors"
+            className="flex items-center gap-1 text-sm transition-colors"
+            style={{ color: "var(--cyan)" }}
           >
             Ver todos <ArrowRight size={14} />
           </Link>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {featured.length === 0 ? (
             <EmptyState message="Nenhum artigo publicado ainda." />
@@ -192,8 +223,13 @@ export default async function Home() {
       {recent.length > 0 && (
         <section className="mx-auto max-w-7xl px-6 py-16">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white">Artigos Recentes</h2>
-            <p className="text-sm text-white/40 mt-1">
+            <h2
+              className="text-2xl font-bold"
+              style={{ color: "var(--text-primary)" }}
+            >
+              Artigos Recentes
+            </h2>
+            <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
               Conteúdo recente da comunidade
             </p>
           </div>
@@ -210,13 +246,30 @@ export default async function Home() {
       )}
 
       {/* Newsletter */}
-      <section className="bg-[#0d1117] border-y border-[#1e2328] py-16 px-6">
+      <section
+        className="border-y py-16 px-6"
+        style={{
+          backgroundColor: "var(--surface)",
+          borderColor: "var(--border)",
+        }}
+      >
         <div className="mx-auto max-w-xl text-center">
-          <div className="w-12 h-12 border border-[#1e2328] rounded flex items-center justify-center mx-auto mb-5">
-            <Mail size={20} className="text-white" />
+          <div
+            className="w-12 h-12 border rounded flex items-center justify-center mx-auto mb-5"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <Mail size={20} style={{ color: "var(--text-primary)" }} />
           </div>
-          <h2 className="text-2xl font-bold text-white">Newsletter Semanal</h2>
-          <p className="mt-3 text-sm text-white/40 leading-relaxed">
+          <h2
+            className="text-2xl font-bold"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Newsletter Semanal
+          </h2>
+          <p
+            className="mt-3 text-sm leading-relaxed"
+            style={{ color: "var(--text-muted)" }}
+          >
             Receba os melhores artigos de tecnologia diretamente no seu email.
             <br />
             Sem spam, apenas conteúdo de qualidade.
@@ -225,13 +278,21 @@ export default async function Home() {
             <input
               type="email"
               placeholder="exemplo@email.com"
-              className="flex-1 bg-[#131619] border border-[#1e2328] text-white text-sm rounded px-4 py-2.5 outline-none focus:border-[#00d4d4] transition-colors placeholder:text-white/20"
+              className="flex-1 text-sm rounded px-4 py-2.5 outline-none transition-colors"
+              style={{
+                backgroundColor: "var(--bg)",
+                border: "1px solid var(--border)",
+                color: "var(--text-primary)",
+              }}
             />
-            <button className="bg-[#00d4d4] text-black text-sm font-medium px-5 py-2.5 rounded hover:bg-[#00bfbf] transition-colors">
+            <button
+              className="text-sm font-medium px-5 py-2.5 rounded transition-colors"
+              style={{ backgroundColor: "var(--cyan)", color: "#000" }}
+            >
               Inscrever
             </button>
           </div>
-          <p className="mt-3 text-xs text-white/25">
+          <p className="mt-3 text-xs" style={{ color: "var(--text-muted)" }}>
             Mais de 10.000 desenvolvedores já recebem nossa newsletter
           </p>
         </div>
@@ -239,16 +300,23 @@ export default async function Home() {
 
       {/* CTA */}
       <section className="py-20 px-6 text-center">
-        <h2 className="text-3xl font-bold text-white">
+        <h2
+          className="text-3xl font-bold"
+          style={{ color: "var(--text-primary)" }}
+        >
           Compartilhe Seu Conhecimento
         </h2>
-        <p className="mt-4 text-sm text-white/40 max-w-md mx-auto leading-relaxed">
+        <p
+          className="mt-4 text-sm max-w-md mx-auto leading-relaxed"
+          style={{ color: "var(--text-muted)" }}
+        >
           Junte-se à nossa comunidade de escritores e compartilhe suas
           experiências e conhecimentos em tecnologia
         </p>
         <Link
           href="/register"
-          className="mt-8 inline-block bg-[#00d4d4] text-black text-sm font-medium px-8 py-3 rounded hover:bg-[#00bfbf] transition-colors"
+          className="mt-8 inline-block text-sm font-medium px-8 py-3 rounded transition-colors"
+          style={{ backgroundColor: "var(--cyan)", color: "#000" }}
         >
           Criar Conta Gratuita
         </Link>

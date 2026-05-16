@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import LayoutShell from "@/components/LayoutShell";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({
@@ -24,11 +25,14 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} bg-[#0d0d0d] text-white antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{ backgroundColor: "var(--bg)", color: "var(--text-primary)" }}
       >
-        <SessionProvider>
-          <LayoutShell>{children}</LayoutShell>
-        </SessionProvider>
+        <ThemeProvider>
+          <SessionProvider>
+            <LayoutShell>{children}</LayoutShell>
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
