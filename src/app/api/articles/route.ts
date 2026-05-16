@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
-// GET /api/articles — lista todos os artigos
 export async function GET() {
   const articles = await prisma.article.findMany({
     orderBy: { publishedAt: "desc" },
@@ -16,7 +15,6 @@ export async function GET() {
   return NextResponse.json(articles);
 }
 
-// POST /api/articles — cria um artigo (autenticado)
 export async function POST(req: NextRequest) {
   const session = await auth();
 
@@ -24,7 +22,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
   }
 
-  const { title, content, bannerUrl } = await req.json();
+  const formData = await req.formData();
+  const title = formData.get("title") as string;
+  const content = formData.get("content") as string;
+  const banner = formData.get("banner") as File | null;
 
   if (!title || !content) {
     return NextResponse.json(
@@ -33,11 +34,21 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  let bannerData: Uint8Array<ArrayBuffer> | null = null;
+  let bannerMimeType: string | null = null;
+
+  if (banner && banner.size > 0) {
+    const bytes = (await banner.arrayBuffer()) as ArrayBuffer;
+    bannerData = new Uint8Array(bytes);
+    bannerMimeType = banner.type;
+  }
+
   const article = await prisma.article.create({
     data: {
       title,
       content,
-      bannerUrl: bannerUrl ?? null,
+      bannerData,
+      bannerMimeType,
       authorId: session.user.id,
     },
   });

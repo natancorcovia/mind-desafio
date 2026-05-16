@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
-// GET /api/articles/:id — busca um artigo
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -11,11 +10,7 @@ export async function GET(
 
   const article = await prisma.article.findUnique({
     where: { id },
-    include: {
-      author: {
-        select: { id: true, name: true },
-      },
-    },
+    include: { author: { select: { id: true, name: true } } },
   });
 
   if (!article) {
@@ -28,7 +23,6 @@ export async function GET(
   return NextResponse.json(article);
 }
 
-// PATCH /api/articles/:id — edita (apenas o autor)
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -54,21 +48,32 @@ export async function PATCH(
     return NextResponse.json({ error: "Proibido." }, { status: 403 });
   }
 
-  const { title, content, bannerUrl } = await req.json();
+  const formData = await req.formData();
+  const title = formData.get("title") as string | null;
+  const content = formData.get("content") as string | null;
+  const banner = formData.get("banner") as File | null;
+
+  let bannerData: Uint8Array<ArrayBuffer> | undefined;
+  let bannerMimeType: string | undefined;
+
+  if (banner && banner.size > 0) {
+    const bytes = (await banner.arrayBuffer()) as ArrayBuffer;
+    bannerData = new Uint8Array(bytes);
+    bannerMimeType = banner.type;
+  }
 
   const updated = await prisma.article.update({
     where: { id },
     data: {
       ...(title && { title }),
       ...(content && { content }),
-      ...(bannerUrl !== undefined && { bannerUrl }),
+      ...(bannerData && { bannerData, bannerMimeType }),
     },
   });
 
   return NextResponse.json(updated);
 }
 
-// DELETE /api/articles/:id — remove (apenas o autor)
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
