@@ -1,51 +1,27 @@
 import Link from "next/link";
 import { Clock, Eye, Heart, ArrowRight, Mail } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 
-// Dados mock por enquanto — substituiremos pela API na próxima etapa
-const mockArticles = [
-  {
-    id: "1",
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in augue ligula. Donec sed eros vel lacus condimentum sollicitudin...",
-    bannerUrl: null,
-    publishedAt: "2025-10-04",
-    author: { name: "John Doe" },
-  },
-  {
-    id: "2",
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in augue ligula. Donec sed eros vel lacus condimentum sollicitudin...",
-    bannerUrl: null,
-    publishedAt: "2025-10-04",
-    author: { name: "John Doe" },
-  },
-  {
-    id: "3",
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in augue ligula. Donec sed eros vel lacus condimentum sollicitudin...",
-    bannerUrl: null,
-    publishedAt: "2025-10-04",
-    author: { name: "John Doe" },
-  },
-  {
-    id: "4",
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in augue ligula. Donec sed eros vel lacus condimentum sollicitudin...",
-    bannerUrl: null,
-    publishedAt: "2025-10-04",
-    author: { name: "John Doe" },
-  },
-];
+async function getArticles() {
+  return prisma.article.findMany({
+    orderBy: { publishedAt: "desc" },
+    include: {
+      author: {
+        select: { id: true, name: true },
+      },
+    },
+  });
+}
 
-function ArticleBanner({ title }: { title: string }) {
+type Article = Awaited<ReturnType<typeof getArticles>>[0];
+
+function ArticleBanner() {
   return (
-    <div className="w-full aspect-video bg-[#f4a89a] flex items-end p-4 overflow-hidden">
-      <span className="font-serif text-4xl font-black text-black leading-none">
-        {title.split(" ").slice(0, 2).join("\n")}
+    <div className="relative w-full aspect-video bg-[#f4a89a] flex items-end p-4 overflow-hidden">
+      <span className="font-serif text-4xl font-black text-black leading-none z-10">
+        Lorem
+        <br />
+        ipsum
       </span>
       <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-[#c5d9f0] rounded-tl-full" />
     </div>
@@ -56,7 +32,7 @@ function ArticleCard({
   article,
   featured = false,
 }: {
-  article: (typeof mockArticles)[0];
+  article: Article;
   featured?: boolean;
 }) {
   const date = new Date(article.publishedAt).toLocaleDateString("pt-BR", {
@@ -66,18 +42,14 @@ function ArticleCard({
   });
 
   return (
-    <Link href={`/articles/${article.id}`}>
+    <Link href={`/articles/${article.id}`} className="h-full">
       <div
         className={`rounded-lg bg-[#131619] border overflow-hidden cursor-pointer transition-all duration-200 hover:border-[#00d4d4]/60 h-full flex flex-col ${
           featured ? "border-[#00d4d4]" : "border-[#1e2328]"
         }`}
       >
-        {/* Banner */}
-        <div className="relative">
-          <ArticleBanner title={article.title} />
-        </div>
+        <ArticleBanner />
 
-        {/* Content */}
         <div className="p-4 flex flex-col flex-1 gap-3">
           <div className="flex items-center justify-between">
             <span className="text-xs bg-[#1e2328] text-white/70 px-2 py-1 rounded">
@@ -121,7 +93,19 @@ function ArticleCard({
   );
 }
 
-export default function Home() {
+function EmptyState({ message }: { message: string }) {
+  return (
+    <div className="col-span-3 py-16 text-center text-white/30 text-sm">
+      {message}
+    </div>
+  );
+}
+
+export default async function Home() {
+  const articles = await getArticles();
+  const featured = articles.slice(0, 3);
+  const recent = articles.slice(3, 7);
+
   return (
     <div className="bg-[#0d0d0d] min-h-screen">
       {/* Hero */}
@@ -162,42 +146,47 @@ export default function Home() {
           </div>
           <Link
             href="/articles"
-            className="flex items-center gap-1 text-sm hover:text-[#00bfbf] transition-colors"
+            className="flex items-center gap-1 text-sm text-[#00d4d4] hover:text-[#00bfbf] transition-colors"
           >
             Ver todos <ArrowRight size={14} />
           </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {mockArticles.slice(0, 3).map((article, i) => (
-            <ArticleCard
-              key={article.id}
-              article={article}
-              featured={i === 1}
-            />
-          ))}
+          {featured.length === 0 ? (
+            <EmptyState message="Nenhum artigo publicado ainda." />
+          ) : (
+            featured.map((article, i) => (
+              <ArticleCard
+                key={article.id}
+                article={article}
+                featured={i === 1}
+              />
+            ))
+          )}
         </div>
       </section>
 
       {/* Artigos Recentes */}
-      <section className="mx-auto max-w-7xl px-6 py-16">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white">Artigos Recentes</h2>
-          <p className="text-sm text-white/40 mt-1">
-            Conteúdo recente da comunidade
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {mockArticles.map((article, i) => (
-            <ArticleCard
-              key={article.id}
-              article={article}
-              featured={i === 1}
-            />
-          ))}
-        </div>
-      </section>
+      {recent.length > 0 && (
+        <section className="mx-auto max-w-7xl px-6 py-16">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-white">Artigos Recentes</h2>
+            <p className="text-sm text-white/40 mt-1">
+              Conteúdo recente da comunidade
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {recent.map((article, i) => (
+              <ArticleCard
+                key={article.id}
+                article={article}
+                featured={i === 1}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Newsletter */}
       <section className="bg-[#0d1117] border-y border-[#1e2328] py-16 px-6">
