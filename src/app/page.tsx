@@ -63,7 +63,7 @@ function ArticleCard({
     <Link href={`/articles/${article.id}`} className="h-full">
       <div
         className={`rounded-lg bg-[#131619] border overflow-hidden cursor-pointer transition-all duration-200 hover:border-[#00d4d4]/60 h-full flex flex-col ${
-          featured ? "border-[#00d4d4]" : "border-[#1e2328]"
+          featured ? "border-[#1e2328]" : "border-[#1e2328]"
         }`}
       >
         <ArticleBanner
