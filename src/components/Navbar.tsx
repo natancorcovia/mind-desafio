@@ -5,6 +5,12 @@ import { useSession, signOut } from "next-auth/react";
 import { Moon, Sun, LayoutDashboard, Settings, LogOut } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "./ThemeProvider";
+import { Irish_Grover } from "next/font/google";
+
+const irishGrover = Irish_Grover({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 function ProfileMenu({ name, email }: { name: string; email: string }) {
   const [open, setOpen] = useState(false);
@@ -148,10 +154,13 @@ export default function Navbar() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link
           href="/"
-          className="font-mono text-xl font-bold tracking-tight"
-          style={{ color: "var(--text-primary)" }}
+          className={`${irishGrover.className} text-4xl leading-none`}
+          style={{
+            color: "var(--text-primary)",
+            letterSpacing: "-2px",
+          }}
         >
-          &lt;M/&gt;
+          {"<M/>"}
         </Link>
 
         <div className="flex items-center gap-6">

@@ -51,6 +51,7 @@ export async function PATCH(
   const formData = await req.formData();
   const title = formData.get("title") as string | null;
   const content = formData.get("content") as string | null;
+  const category = formData.get("category") as string | null;
   const banner = formData.get("banner") as File | null;
 
   let bannerData: Uint8Array<ArrayBuffer> | undefined;
@@ -67,6 +68,7 @@ export async function PATCH(
     data: {
       ...(title && { title }),
       ...(content && { content }),
+      ...(category && { category }),
       ...(bannerData && { bannerData, bannerMimeType }),
     },
   });

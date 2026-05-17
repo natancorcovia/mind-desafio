@@ -1,260 +1,324 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { notFound } from "next/navigation";
+import { ArrowLeft, Clock, Eye, Heart, Share2, Bookmark } from "lucide-react";
+import DeleteButton from "@/components/DeleteButton";
+import { getCategoryLabel } from "@/lib/categories";
 
-export default function EditArticlePage() {
-  const router = useRouter();
-  const { id } = useParams<{ id: string }>();
+async function getArticle(id: string) {
+  return prisma.article.findUnique({
+    where: { id },
+    include: { author: { select: { id: true, name: true } } },
+  });
+}
 
-  const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(true);
-  const [error, setError] = useState("");
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+export default async function ArticlePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const [article, session] = await Promise.all([getArticle(id), auth()]);
 
-  useEffect(() => {
-    async function fetchArticle() {
-      const res = await fetch(`/api/articles/${id}`);
-      const data = await res.json();
-      setTitle(data.title);
-      setContent(data.content);
-      setFetching(false);
-    }
-    fetchArticle();
-  }, [id]);
+  if (!article) notFound();
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  const isAuthor = session?.user?.id === article.authorId;
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
+  const date = new Date(article.publishedAt).toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 
-    const res = await fetch(`/api/articles/${id}`, {
-      method: "PATCH",
-      body: formData,
-    });
-
-    const data = await res.json();
-    setLoading(false);
-
-    if (!res.ok) {
-      setError(data.error || "Erro ao salvar alterações.");
-      return;
-    }
-
-    router.push(`/articles/${id}`);
-    router.refresh();
-  }
-
-  const wordCount =
-    content.trim() === "" ? 0 : content.trim().split(/\s+/).length;
-  const charCount = content.length;
+  const wordCount = article.content.trim().split(/\s+/).length;
   const readTime = Math.max(1, Math.ceil(wordCount / 200));
 
-  const inputStyle = {
-    backgroundColor: "var(--bg)",
-    border: "1px solid var(--border)",
-    color: "var(--text-primary)",
+  const renderContent = (text: string) => {
+    return text.split("\n").map((line, i) => {
+      if (line.startsWith("## "))
+        return (
+          <h2
+            key={i}
+            className="text-base font-bold mt-6 mb-2"
+            style={{ color: "var(--text-primary)" }}
+          >
+            {line.replace("## ", "")}
+          </h2>
+        );
+      if (line.startsWith("# "))
+        return (
+          <h1
+            key={i}
+            className="text-lg font-bold mt-6 mb-2"
+            style={{ color: "var(--text-primary)" }}
+          >
+            {line.replace("# ", "")}
+          </h1>
+        );
+      if (line.trim() === "") return <br key={i} />;
+      return (
+        <p
+          key={i}
+          className="text-sm leading-relaxed"
+          style={{ color: "var(--text-secondary)" }}
+        >
+          {line}
+        </p>
+      );
+    });
   };
 
-  if (fetching) {
-    return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: "var(--bg)" }}
-      >
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-          Carregando...
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <div
-      className="min-h-screen px-6 py-10"
-      style={{ backgroundColor: "var(--bg)" }}
-    >
-      <div className="mx-auto max-w-2xl">
+    <div className="min-h-screen" style={{ backgroundColor: "var(--bg)" }}>
+      <div className="mx-auto max-w-2xl px-6 py-10">
         {/* Voltar */}
         <Link
-          href={`/articles/${id}`}
+          href="/articles"
           className="inline-flex items-center gap-1.5 text-sm transition-colors mb-8"
           style={{ color: "var(--text-muted)" }}
         >
           <ArrowLeft size={14} />
-          Voltar ao Dashboard
+          Voltar aos Artigos
         </Link>
 
-        {/* Header */}
-        <div
-          className="mb-8 pb-8 border-b"
-          style={{ borderColor: "var(--border)" }}
-        >
-          <h1
-            className="text-2xl font-bold"
-            style={{ color: "var(--text-primary)" }}
-          >
-            Editar Artigo
-          </h1>
-          <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
-            Atualize as informações do seu artigo
-          </p>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <div
-            className="rounded-lg p-6 flex flex-col gap-5 border"
+        {/* Categoria */}
+        <div className="mb-4">
+          <span
+            className="text-xs border px-2 py-1 rounded"
             style={{
-              backgroundColor: "var(--surface)",
-              borderColor: "var(--border)",
+              backgroundColor:
+                "color-mix(in srgb, var(--cyan) 10%, transparent)",
+              color: "var(--cyan)",
+              borderColor: "color-mix(in srgb, var(--cyan) 20%, transparent)",
             }}
           >
-            {/* Título */}
-            <div className="flex flex-col gap-1.5">
-              <label
-                className="text-xs font-medium"
-                style={{ color: "var(--text-muted)" }}
-              >
-                Título do Artigo <span style={{ color: "var(--cyan)" }}>*</span>
-              </label>
-              <input
-                name="title"
-                type="text"
-                required
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="text-sm rounded px-3 py-2.5 outline-none transition-colors"
-                style={inputStyle}
-              />
-            </div>
+            {getCategoryLabel(article.category)}
+          </span>
+        </div>
 
-            {/* Resumo */}
-            <div className="flex flex-col gap-1.5">
-              <label
-                className="text-xs font-medium"
-                style={{ color: "var(--text-muted)" }}
-              >
-                Resumo <span style={{ color: "var(--cyan)" }}>*</span>
-              </label>
-              <textarea
-                name="summary"
-                rows={3}
-                placeholder="Breve descrição do artigo..."
-                className="text-sm rounded px-3 py-2.5 outline-none transition-colors resize-none"
-                style={inputStyle}
-              />
-              <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-                62/120 caracteres
-              </span>
-            </div>
+        {/* Título */}
+        <h1
+          className="text-2xl font-bold leading-snug mb-3"
+          style={{ color: "var(--text-primary)" }}
+        >
+          {article.title}
+        </h1>
 
-            {/* Categoria */}
-            <div className="flex flex-col gap-1.5">
-              <label
-                className="text-xs font-medium"
-                style={{ color: "var(--text-muted)" }}
-              >
-                Categoria <span style={{ color: "var(--cyan)" }}>*</span>
-              </label>
-              <select
-                name="category"
-                className="text-sm rounded px-3 py-2.5 outline-none transition-colors appearance-none cursor-pointer"
-                style={inputStyle}
-              >
-                <option value="desenvolvimento-web">Desenvolvimento web</option>
-                <option value="ia">Inteligência Artificial</option>
-                <option value="devops">DevOps</option>
-                <option value="mobile">Mobile</option>
-                <option value="seguranca">Segurança</option>
-              </select>
-            </div>
+        <p
+          className="text-sm leading-relaxed mb-5"
+          style={{ color: "var(--text-muted)" }}
+        >
+          Explorando as tendências e inovações que moldarão a tecnologia nos
+          próximos anos.
+        </p>
 
-            {/* Imagem de Capa */}
-            <div className="flex flex-col gap-1.5">
-              <label
-                className="text-xs font-medium"
-                style={{ color: "var(--text-muted)" }}
-              >
-                Imagem de Capa
-              </label>
-              <input
-                name="banner"
-                type="file"
-                accept="image/*"
-                className="text-sm rounded px-3 py-2.5 outline-none transition-colors cursor-pointer file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs"
-                style={{ ...inputStyle, color: "var(--text-muted)" }}
-              />
-              <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-                Deixe em branco para manter a imagem atual
-              </span>
-            </div>
-
-            {/* Conteúdo */}
-            <div className="flex flex-col gap-1.5">
-              <label
-                className="text-xs font-medium"
-                style={{ color: "var(--text-muted)" }}
-              >
-                Conteúdo do Artigo{" "}
-                <span style={{ color: "var(--cyan)" }}>*</span>
-              </label>
-              <textarea
-                name="content"
-                rows={14}
-                required
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                className="text-sm rounded px-3 py-2.5 outline-none transition-colors resize-none font-mono leading-relaxed"
-                style={inputStyle}
-              />
-              <div
-                className="flex items-center gap-4 text-xs"
-                style={{ color: "var(--text-muted)" }}
-              >
-                <span>{charCount}/6500 caracteres</span>
-                <span>• {wordCount} palavras</span>
-                <span>
-                  • {readTime} minuto{readTime > 1 ? "s" : ""} de leitura
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {error && (
-            <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded px-3 py-2">
-              {error}
-            </p>
-          )}
-
-          {/* Actions */}
-          <div className="flex gap-3">
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 py-2.5 text-sm font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ backgroundColor: "var(--cyan)", color: "#000" }}
-            >
-              {loading ? "Salvando..." : "Salvar Alterações"}
-            </button>
-            <Link
-              href={`/articles/${id}`}
-              className="px-6 py-2.5 text-sm font-medium rounded transition-colors border"
+        {/* Autor + ações */}
+        <div
+          className="flex items-center justify-between py-4 border-y mb-6"
+          style={{ borderColor: "var(--border)" }}
+        >
+          <div className="flex items-center gap-3">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold"
               style={{
-                borderColor: "var(--border)",
+                backgroundColor: "var(--surface-hover)",
                 color: "var(--text-primary)",
               }}
             >
-              Cancelar
-            </Link>
+              {article.author.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <p
+                className="text-xs font-medium"
+                style={{ color: "var(--text-primary)" }}
+              >
+                {article.author.name}
+              </p>
+              <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                {date}
+              </p>
+            </div>
+            <span
+              className="text-xs flex items-center gap-1 ml-2"
+              style={{ color: "var(--text-muted)" }}
+            >
+              <Clock size={11} /> {readTime}min
+            </span>
           </div>
-        </form>
+          <div
+            className="flex items-center gap-3"
+            style={{ color: "var(--text-muted)" }}
+          >
+            <button className="hover:opacity-80 transition-opacity">
+              <Heart size={16} />
+            </button>
+            <button className="hover:opacity-80 transition-opacity">
+              <Bookmark size={16} />
+            </button>
+            <button className="hover:opacity-80 transition-opacity">
+              <Share2 size={16} />
+            </button>
+            {isAuthor && (
+              <Link
+                href={`/articles/${article.id}/edit`}
+                className="text-xs ml-2 transition-colors"
+                style={{ color: "var(--cyan)" }}
+              >
+                Editar
+              </Link>
+            )}
+            {isAuthor && <DeleteButton articleId={article.id} />}
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div
+          className="flex items-center gap-4 text-xs mb-8"
+          style={{ color: "var(--text-muted)" }}
+        >
+          <span className="flex items-center gap-1">
+            <Clock size={11} /> {readTime} minuto{readTime > 1 ? "s" : ""}
+          </span>
+          <span className="flex items-center gap-1">
+            <Eye size={11} /> 122 visualizações
+          </span>
+          <span className="flex items-center gap-1">
+            <Heart size={11} /> 1 comentário
+          </span>
+        </div>
+
+        {/* Banner */}
+        {article.bannerData ? (
+          <div className="w-full rounded-lg overflow-hidden mb-8">
+            <img
+              src={`/api/articles/${article.id}/banner`}
+              alt="Banner"
+              className="w-full object-cover"
+            />
+          </div>
+        ) : (
+          <div className="relative w-full aspect-video rounded-lg bg-[#f4a89a] flex items-end p-6 overflow-hidden mb-8">
+            <span className="font-serif text-5xl font-black text-black leading-none z-10">
+              Lorem
+              <br />
+              ipsum
+            </span>
+            <div className="absolute bottom-0 right-0 w-1/2 h-1/2 bg-[#c5d9f0] rounded-tl-full" />
+          </div>
+        )}
+
+        {/* Conteúdo */}
+        <article className="flex flex-col gap-1 mb-10">
+          {renderContent(article.content)}
+        </article>
+
+        {/* Tags */}
+        <div className="flex gap-2 flex-wrap mb-10">
+          {[
+            "Desenvolvimento web",
+            "Inteligência Artificial",
+            "Desenvolvimento backend",
+          ].map((tag) => (
+            <span
+              key={tag}
+              className="text-xs px-3 py-1 rounded-full border"
+              style={{
+                borderColor: "var(--border)",
+                color: "var(--text-muted)",
+              }}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        {/* Comentários */}
+        <div className="border-t pt-8" style={{ borderColor: "var(--border)" }}>
+          <h3
+            className="text-sm font-bold mb-6"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Comentários
+          </h3>
+
+          <div className="flex flex-col gap-4 mb-6">
+            {[
+              {
+                name: "John Doe",
+                date: "20/01/2025",
+                text: "Excelente artigo! Muito bem explicado sobre as tendências da IA.",
+              },
+              {
+                name: "Maria Smith",
+                date: "20/01/2025",
+                text: "Artigo muito interessante, mostra claramente como a IA está deixando de ser tendência para se tornar essencial das soluções do dia a dia.",
+              },
+            ].map((comment, i) => (
+              <div key={i} className="flex gap-3">
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+                  style={{
+                    backgroundColor: "var(--surface-hover)",
+                    color: "var(--text-primary)",
+                  }}
+                >
+                  {comment.name.charAt(0)}
+                </div>
+                <div
+                  className="flex-1 rounded-lg p-3 border"
+                  style={{
+                    backgroundColor: "var(--surface)",
+                    borderColor: "var(--border)",
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span
+                      className="text-xs font-medium"
+                      style={{ color: "var(--text-primary)" }}
+                    >
+                      {comment.name}
+                    </span>
+                    <div
+                      className="flex items-center gap-2"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      <span className="text-xs">{comment.date}</span>
+                      <Heart size={11} />
+                      <span className="text-xs">0</span>
+                    </div>
+                  </div>
+                  <p
+                    className="text-xs leading-relaxed"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    {comment.text}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Input comentário */}
+          <div className="flex flex-col gap-2">
+            <textarea
+              rows={3}
+              placeholder="Ótimo artigo. Esperando pelo próximo!"
+              className="w-full text-sm rounded-lg px-4 py-3 outline-none transition-colors resize-none"
+              style={{
+                backgroundColor: "var(--surface)",
+                border: "1px solid var(--border)",
+                color: "var(--text-primary)",
+              }}
+            />
+            <button
+              className="self-start text-xs font-medium px-4 py-2 rounded transition-colors"
+              style={{ backgroundColor: "var(--cyan)", color: "#000" }}
+            >
+              Publicar Comentário
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

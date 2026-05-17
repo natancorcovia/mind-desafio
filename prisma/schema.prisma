@@ -26,6 +26,7 @@ model Article {
   id              String    @id @default(cuid())
   title           String
   content         String
+  category        String    @default("desenvolvimento-web")
   bannerData      Bytes?
   bannerMimeType  String?
   publishedAt     DateTime  @default(now())

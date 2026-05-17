@@ -4,6 +4,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { Irish_Grover } from "next/font/google";
+
+const irishGrover = Irish_Grover({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -64,7 +70,9 @@ export default function RegisterPage() {
             className="font-mono text-2xl font-bold"
             style={{ color: "var(--text-primary)" }}
           >
-            &lt;M/&gt;
+            <span className={`${irishGrover.className} text-4xl leading-none`}>
+              {"<M/>"}
+            </span>
           </Link>
           <h1
             className="mt-4 text-xl font-bold"

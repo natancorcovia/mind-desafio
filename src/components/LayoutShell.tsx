@@ -6,6 +6,12 @@ import Footer from "./Footer";
 import Link from "next/link";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
+import { Irish_Grover } from "next/font/google";
+
+const irishGrover = Irish_Grover({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 const authRoutes = ["/login", "/register"];
 
@@ -26,7 +32,9 @@ function AuthNavbar() {
           className="font-mono text-xl font-bold tracking-tight"
           style={{ color: "var(--text-primary)" }}
         >
-          &lt;M/&gt;
+          <span className={`${irishGrover.className} text-4xl leading-none`}>
+            {"<M/>"}
+          </span>
         </Link>
         <div className="flex items-center gap-6">
           <Link

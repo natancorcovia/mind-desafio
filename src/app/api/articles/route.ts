@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const title = formData.get("title") as string;
   const content = formData.get("content") as string;
+  const category = formData.get("category") as string;
   const banner = formData.get("banner") as File | null;
 
   if (!title || !content) {
@@ -43,15 +44,24 @@ export async function POST(req: NextRequest) {
     bannerMimeType = banner.type;
   }
 
-  const article = await prisma.article.create({
-    data: {
-      title,
-      content,
-      bannerData,
-      bannerMimeType,
-      authorId: session.user.id,
-    },
-  });
+  try {
+    const article = await prisma.article.create({
+      data: {
+        title,
+        content,
+        category: category ?? "desenvolvimento-web",
+        bannerData,
+        bannerMimeType,
+        authorId: session.user.id,
+      },
+    });
 
-  return NextResponse.json(article, { status: 201 });
+    return NextResponse.json(article, { status: 201 });
+  } catch (error) {
+    console.error("Erro ao criar artigo:", error);
+    return NextResponse.json(
+      { error: "Erro interno ao criar artigo." },
+      { status: 500 },
+    );
+  }
 }

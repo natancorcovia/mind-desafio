@@ -12,11 +12,13 @@ import {
   LayoutGrid,
   LayoutList,
 } from "lucide-react";
+import { getCategoryLabel } from "@/lib/categories";
 
 type Article = {
   id: string;
   title: string;
   content: string;
+  category: string;
   bannerData: string | null;
   publishedAt: string;
   author: { id: string; name: string };
@@ -83,7 +85,7 @@ function ArticleCard({ article }: { article: Article }) {
                 color: "var(--text-secondary)",
               }}
             >
-              Desenvolvimento web
+              {getCategoryLabel(article.category)}
             </span>
             <span
               className="text-xs flex items-center gap-1"
@@ -177,7 +179,7 @@ function ArticleListItem({ article }: { article: Article }) {
                   color: "var(--text-secondary)",
                 }}
               >
-                Desenvolvimento web
+                {getCategoryLabel(article.category)}
               </span>
               <span
                 className="text-xs flex items-center gap-1"
@@ -256,12 +258,17 @@ export default function ArticlesPage() {
     load();
   }, []);
 
-  const filtered = articles.filter(
-    (a) =>
+  const filtered = articles.filter((a) => {
+    const matchSearch =
       search === "" ||
       a.title.toLowerCase().includes(search.toLowerCase()) ||
-      a.content.toLowerCase().includes(search.toLowerCase()),
-  );
+      a.content.toLowerCase().includes(search.toLowerCase());
+
+    const matchCategory =
+      category === "Todos" || getCategoryLabel(a.category) === category;
+
+    return matchSearch && matchCategory;
+  });
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "var(--bg)" }}>

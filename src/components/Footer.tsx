@@ -1,4 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
+import { Irish_Grover } from "next/font/google";
+
+const irishGrover = Irish_Grover({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 export default function Footer() {
   return (
@@ -11,11 +18,14 @@ export default function Footer() {
           {/* Brand */}
           <div className="max-w-xs">
             <span
-              className="font-mono text-xl font-bold"
-              style={{ color: "var(--text-primary)" }}
+              className={`${irishGrover.className} text-3xl leading-none`}
+              style={{
+                color: "var(--text-primary)",
+              }}
             >
-              &lt;M/&gt;
+              {"<M/>"}
             </span>
+
             <p
               className="mt-3 text-sm leading-relaxed"
               style={{ color: "var(--text-muted)" }}
@@ -34,6 +44,7 @@ export default function Footer() {
               >
                 Navegação
               </h4>
+
               <ul className="space-y-2">
                 {["Home", "Artigos", "Dashboard"].map((item) => (
                   <li key={item}>
@@ -49,6 +60,7 @@ export default function Footer() {
               </ul>
             </div>
 
+            {/* Redes sociais */}
             <div>
               <h4
                 className="text-sm font-semibold mb-4"
@@ -56,27 +68,48 @@ export default function Footer() {
               >
                 Redes Sociais
               </h4>
+
               <div className="flex gap-4">
                 <a
-                  href="#"
-                  className="text-sm transition-colors hover:opacity-80"
-                  style={{ color: "var(--text-muted)" }}
+                  href="https://linkedin.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:opacity-80 transition-opacity"
                 >
-                  LinkedIn
+                  <Image
+                    src="/icons/linkedin.svg"
+                    alt="Linkedin"
+                    width={20}
+                    height={20}
+                  />
                 </a>
+
                 <a
-                  href="#"
-                  className="text-sm transition-colors hover:opacity-80"
-                  style={{ color: "var(--text-muted)" }}
+                  href="https://github.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:opacity-80 transition-opacity"
                 >
-                  GitHub
+                  <Image
+                    src="/icons/github.svg"
+                    alt="Github"
+                    width={20}
+                    height={20}
+                  />
                 </a>
+
                 <a
-                  href="#"
-                  className="text-sm transition-colors hover:opacity-80"
-                  style={{ color: "var(--text-muted)" }}
+                  href="https://twitter.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:opacity-80 transition-opacity"
                 >
-                  X
+                  <Image
+                    src="/icons/twitter.svg"
+                    alt="Twitter"
+                    width={20}
+                    height={20}
+                  />
                 </a>
               </div>
             </div>
