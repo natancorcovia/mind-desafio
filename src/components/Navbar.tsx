@@ -5,12 +5,6 @@ import { useSession, signOut } from "next-auth/react";
 import { Moon, Sun, LayoutDashboard, Settings, LogOut } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "./ThemeProvider";
-import { Irish_Grover } from "next/font/google";
-
-const irishGrover = Irish_Grover({
-  subsets: ["latin"],
-  weight: "400",
-});
 
 function ProfileMenu({ name, email }: { name: string; email: string }) {
   const [open, setOpen] = useState(false);
@@ -87,14 +81,8 @@ function ProfileMenu({ name, email }: { name: string; email: string }) {
             <Link
               href="/dashboard"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:opacity-80"
               style={{ color: "var(--text-secondary)" }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "var(--surface-hover)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "transparent")
-              }
             >
               <LayoutDashboard size={15} />
               Dashboard
@@ -102,14 +90,8 @@ function ProfileMenu({ name, email }: { name: string; email: string }) {
             <Link
               href="/settings"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:opacity-80"
               style={{ color: "var(--text-secondary)" }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "var(--surface-hover)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "transparent")
-              }
             >
               <Settings size={15} />
               Configurações
@@ -119,15 +101,9 @@ function ProfileMenu({ name, email }: { name: string; email: string }) {
           {/* Sair */}
           <div className="py-1">
             <button
-              onClick={() => signOut()}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors"
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:opacity-80"
               style={{ color: "var(--text-secondary)" }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "var(--surface-hover)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = "transparent")
-              }
             >
               <LogOut size={15} />
               Sair
@@ -154,13 +130,10 @@ export default function Navbar() {
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link
           href="/"
-          className={`${irishGrover.className} text-4xl leading-none`}
-          style={{
-            color: "var(--text-primary)",
-            letterSpacing: "-2px",
-          }}
+          className="font-mono text-xl font-bold tracking-tight"
+          style={{ color: "var(--text-primary)" }}
         >
-          {"<M/>"}
+          &lt;M/&gt;
         </Link>
 
         <div className="flex items-center gap-6">
@@ -181,7 +154,7 @@ export default function Navbar() {
 
           <button
             onClick={toggle}
-            className="transition-colors"
+            className="transition-colors cursor-pointer"
             style={{ color: "var(--text-muted)" }}
           >
             {theme === "dark" ? <Moon size={16} /> : <Sun size={16} />}

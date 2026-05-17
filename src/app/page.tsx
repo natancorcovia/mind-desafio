@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Clock, Eye, Heart, ArrowRight, Mail } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { getCategoryLabel } from "@/lib/categories";
 
 async function getArticles() {
   return prisma.article.findMany({
@@ -41,18 +42,15 @@ function ArticleBanner({
   );
 }
 
-function ArticleCard({
-  article,
-  featured = false,
-}: {
-  article: Article;
-  featured?: boolean;
-}) {
+function ArticleCard({ article }: { article: Article }) {
   const date = new Date(article.publishedAt).toLocaleDateString("pt-BR", {
     day: "numeric",
     month: "short",
     year: "numeric",
   });
+
+  const wordCount = article.content.trim().split(/\s+/).length;
+  const readTime = Math.max(1, Math.ceil(wordCount / 200));
 
   return (
     <Link href={`/articles/${article.id}`} className="h-full">
@@ -60,7 +58,7 @@ function ArticleCard({
         className="article-card rounded-lg overflow-hidden cursor-pointer transition-all duration-200 h-full flex flex-col border"
         style={{
           backgroundColor: "var(--surface)",
-          borderColor: featured ? "var(--cyan)" : "var(--border)",
+          borderColor: "var(--border)",
         }}
       >
         <ArticleBanner
@@ -76,7 +74,7 @@ function ArticleCard({
                 color: "var(--text-secondary)",
               }}
             >
-              Desenvolvimento web
+              {getCategoryLabel(article.category)}
             </span>
             <span
               className="text-xs flex items-center gap-1"
@@ -88,7 +86,7 @@ function ArticleCard({
           </div>
           <h3
             className="font-bold text-sm leading-snug"
-            style={{ color: featured ? "var(--cyan)" : "var(--text-primary)" }}
+            style={{ color: "var(--text-primary)" }}
           >
             {article.title}
           </h3>
@@ -110,7 +108,7 @@ function ArticleCard({
               style={{ color: "var(--text-muted)" }}
             >
               <span className="flex items-center gap-1 text-xs">
-                <Clock size={11} /> 6min
+                <Clock size={11} /> {readTime}min
               </span>
               <span className="flex items-center gap-1 text-xs">
                 <Eye size={11} /> 122
@@ -140,7 +138,7 @@ function EmptyState({ message }: { message: string }) {
 export default async function Home() {
   const articles = await getArticles();
   const featured = articles.slice(0, 3);
-  const recent = articles.slice(3, 7);
+  const recent = articles.slice(3, 9);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "var(--bg)" }}>
@@ -208,12 +206,8 @@ export default async function Home() {
           {featured.length === 0 ? (
             <EmptyState message="Nenhum artigo publicado ainda." />
           ) : (
-            featured.map((article, i) => (
-              <ArticleCard
-                key={article.id}
-                article={article}
-                featured={i === 1}
-              />
+            featured.map((article) => (
+              <ArticleCard key={article.id} article={article} />
             ))
           )}
         </div>
@@ -234,12 +228,8 @@ export default async function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {recent.map((article, i) => (
-              <ArticleCard
-                key={article.id}
-                article={article}
-                featured={i === 1}
-              />
+            {recent.map((article) => (
+              <ArticleCard key={article.id} article={article} />
             ))}
           </div>
         </section>
