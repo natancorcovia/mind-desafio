@@ -276,7 +276,7 @@ export default async function Home() {
               }}
             />
             <button
-              className="text-sm font-medium px-5 py-2.5 rounded transition-colors"
+              className="cursor-pointer text-sm font-medium px-5 py-2.5 rounded transition-colors"
               style={{ backgroundColor: "var(--cyan)", color: "#000" }}
             >
               Inscrever

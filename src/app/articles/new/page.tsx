@@ -100,7 +100,7 @@ export default function NewArticlePage() {
                 name="title"
                 type="text"
                 required
-                placeholder="O Futuro da Inteligência Artificial em 2025"
+                placeholder="O Futuro da Inteligência Artificial em 2026"
                 className="text-sm rounded px-3 py-2.5 outline-none transition-colors"
                 style={inputStyle}
               />
