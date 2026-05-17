@@ -37,40 +37,78 @@ export default function LoginPage() {
     router.refresh();
   }
 
+  const inputStyle = {
+    backgroundColor: "var(--bg)",
+    border: "1px solid var(--border)",
+    color: "var(--text-primary)",
+  };
+
   return (
-    <div className="min-h-screen bg-[#0d0d0d] flex items-center justify-center px-6">
+    <div
+      className="min-h-screen flex items-center justify-center px-6"
+      style={{ backgroundColor: "var(--bg)" }}
+    >
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="font-mono text-2xl font-bold text-white">
+          <Link
+            href="/"
+            className="font-mono text-2xl font-bold"
+            style={{ color: "var(--text-primary)" }}
+          >
             &lt;M/&gt;
           </Link>
-          <h1 className="mt-4 text-xl font-bold text-white">Entrar na conta</h1>
-          <p className="mt-1 text-sm text-white/40">Bem-vindo de volta</p>
+          <h1
+            className="mt-4 text-xl font-bold"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Entrar na conta
+          </h1>
+          <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
+            Bem-vindo de volta
+          </p>
         </div>
 
         {/* Form */}
-        <div className="bg-[#131619] border border-[#1e2328] rounded-lg p-6">
+        <div
+          className="rounded-lg p-6 border"
+          style={{
+            backgroundColor: "var(--surface)",
+            borderColor: "var(--border)",
+          }}
+        >
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-white/60">Email</label>
+              <label
+                className="text-xs font-medium"
+                style={{ color: "var(--text-muted)" }}
+              >
+                Email
+              </label>
               <input
                 name="email"
                 type="email"
                 required
                 placeholder="seu@email.com"
-                className="bg-[#0d0d0d] border border-[#1e2328] text-white text-sm rounded px-3 py-2.5 outline-none focus:border-[#00d4d4] transition-colors placeholder:text-white/20"
+                className="text-sm rounded px-3 py-2.5 outline-none transition-colors placeholder:opacity-30"
+                style={inputStyle}
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-white/60">Senha</label>
+              <label
+                className="text-xs font-medium"
+                style={{ color: "var(--text-muted)" }}
+              >
+                Senha
+              </label>
               <input
                 name="password"
                 type="password"
                 required
                 placeholder="••••••••"
-                className="bg-[#0d0d0d] border border-[#1e2328] text-white text-sm rounded px-3 py-2.5 outline-none focus:border-[#00d4d4] transition-colors placeholder:text-white/20"
+                className="text-sm rounded px-3 py-2.5 outline-none transition-colors placeholder:opacity-30"
+                style={inputStyle}
               />
             </div>
 
@@ -83,18 +121,23 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 w-full py-2.5 bg-[#00d4d4] text-black text-sm font-medium rounded hover:bg-[#00bfbf] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-2 w-full py-2.5 text-sm font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ backgroundColor: "var(--cyan)", color: "#000" }}
             >
               {loading ? "Entrando..." : "Entrar"}
             </button>
           </form>
         </div>
 
-        <p className="mt-4 text-center text-sm text-white/40">
+        <p
+          className="mt-4 text-center text-sm"
+          style={{ color: "var(--text-muted)" }}
+        >
           Não tem conta?{" "}
           <Link
             href="/register"
-            className="text-[#00d4d4] hover:text-[#00bfbf] transition-colors"
+            className="transition-colors"
+            style={{ color: "var(--cyan)" }}
           >
             Cadastrar
           </Link>

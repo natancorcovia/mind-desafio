@@ -40,7 +40,6 @@ function ArticleBanner({
       </div>
     );
   }
-
   return (
     <div className="relative w-full aspect-video bg-[#f4a89a] flex items-end p-4 overflow-hidden">
       <span className="font-serif text-4xl font-black text-black leading-none z-10">
@@ -59,40 +58,64 @@ function ArticleCard({ article }: { article: Article }) {
     month: "short",
     year: "numeric",
   });
-
   const wordCount = article.content.trim().split(/\s+/).length;
   const readTime = Math.max(1, Math.ceil(wordCount / 200));
 
   return (
     <Link href={`/articles/${article.id}`} className="h-full">
-      <div className="rounded-lg bg-[#131619] border border-[#1e2328] overflow-hidden cursor-pointer transition-all duration-200 hover:border-[#00d4d4]/60 h-full flex flex-col">
+      <div
+        className="article-card rounded-lg overflow-hidden cursor-pointer transition-all duration-200 h-full flex flex-col border"
+        style={{
+          backgroundColor: "var(--surface)",
+          borderColor: "var(--border)",
+        }}
+      >
         <ArticleBanner
           articleId={article.id}
           hasBanner={!!article.bannerData}
         />
-
         <div className="p-4 flex flex-col flex-1 gap-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs bg-[#1e2328] text-white/70 px-2 py-1 rounded">
+            <span
+              className="text-xs px-2 py-1 rounded"
+              style={{
+                backgroundColor: "var(--surface-hover)",
+                color: "var(--text-secondary)",
+              }}
+            >
               Desenvolvimento web
             </span>
-            <span className="text-xs text-white/40 flex items-center gap-1">
+            <span
+              className="text-xs flex items-center gap-1"
+              style={{ color: "var(--text-muted)" }}
+            >
               <Clock size={12} />
               {date}
             </span>
           </div>
-
-          <h3 className="font-bold text-sm leading-snug text-white">
+          <h3
+            className="font-bold text-sm leading-snug"
+            style={{ color: "var(--text-primary)" }}
+          >
             {article.title}
           </h3>
-
-          <p className="text-xs text-white/50 leading-relaxed line-clamp-3 flex-1">
+          <p
+            className="text-xs leading-relaxed line-clamp-3 flex-1"
+            style={{ color: "var(--text-muted)" }}
+          >
             {article.content}
           </p>
-
-          <div className="flex items-center justify-between pt-1 border-t border-[#1e2328]">
-            <span className="text-xs text-white/40">{article.author.name}</span>
-            <div className="flex items-center gap-3 text-white/30">
+          <div
+            className="flex items-center justify-between pt-1 border-t"
+            style={{ borderColor: "var(--border)" }}
+          >
+            <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+              {article.author.name}
+            </span>
+            <div
+              className="flex items-center gap-3"
+              style={{ color: "var(--text-muted)" }}
+            >
               <span className="flex items-center gap-1 text-xs">
                 <Clock size={11} /> {readTime}min
               </span>
@@ -116,14 +139,18 @@ function ArticleListItem({ article }: { article: Article }) {
     month: "short",
     year: "numeric",
   });
-
   const wordCount = article.content.trim().split(/\s+/).length;
   const readTime = Math.max(1, Math.ceil(wordCount / 200));
 
   return (
     <Link href={`/articles/${article.id}`}>
-      <div className="rounded-lg bg-[#131619] border border-[#1e2328] overflow-hidden cursor-pointer transition-all duration-200 hover:border-[#00d4d4]/60 flex gap-4 p-4">
-        {/* Thumb */}
+      <div
+        className="article-card rounded-lg overflow-hidden cursor-pointer transition-all duration-200 flex gap-4 p-4 border"
+        style={{
+          backgroundColor: "var(--surface)",
+          borderColor: "var(--border)",
+        }}
+      >
         <div className="w-32 h-24 shrink-0 rounded overflow-hidden">
           {article.bannerData ? (
             <img
@@ -140,29 +167,46 @@ function ArticleListItem({ article }: { article: Article }) {
             </div>
           )}
         </div>
-
-        {/* Content */}
         <div className="flex flex-col flex-1 gap-2 justify-between">
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2">
-              <span className="text-xs bg-[#1e2328] text-white/70 px-2 py-0.5 rounded">
+              <span
+                className="text-xs px-2 py-0.5 rounded"
+                style={{
+                  backgroundColor: "var(--surface-hover)",
+                  color: "var(--text-secondary)",
+                }}
+              >
                 Desenvolvimento web
               </span>
-              <span className="text-xs text-white/30 flex items-center gap-1">
+              <span
+                className="text-xs flex items-center gap-1"
+                style={{ color: "var(--text-muted)" }}
+              >
                 <Clock size={11} /> {date}
               </span>
             </div>
-            <h3 className="font-bold text-sm text-white leading-snug">
+            <h3
+              className="font-bold text-sm leading-snug"
+              style={{ color: "var(--text-primary)" }}
+            >
               {article.title}
             </h3>
-            <p className="text-xs text-white/50 line-clamp-2 leading-relaxed">
+            <p
+              className="text-xs line-clamp-2 leading-relaxed"
+              style={{ color: "var(--text-muted)" }}
+            >
               {article.content}
             </p>
           </div>
-
           <div className="flex items-center justify-between">
-            <span className="text-xs text-white/40">{article.author.name}</span>
-            <div className="flex items-center gap-3 text-white/30">
+            <span className="text-xs" style={{ color: "var(--text-muted)" }}>
+              {article.author.name}
+            </span>
+            <div
+              className="flex items-center gap-3"
+              style={{ color: "var(--text-muted)" }}
+            >
               <span className="flex items-center gap-1 text-xs">
                 <Clock size={11} /> {readTime}min
               </span>
@@ -212,29 +256,34 @@ export default function ArticlesPage() {
     load();
   }, []);
 
-  const filtered = articles.filter((a) => {
-    const matchSearch =
+  const filtered = articles.filter(
+    (a) =>
       search === "" ||
       a.title.toLowerCase().includes(search.toLowerCase()) ||
-      a.content.toLowerCase().includes(search.toLowerCase());
-    return matchSearch;
-  });
+      a.content.toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
+    <div className="min-h-screen" style={{ backgroundColor: "var(--bg)" }}>
       <div className="mx-auto max-w-7xl px-6 py-12">
         {/* Header */}
         <div className="flex items-end justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white">Todos os Artigos</h1>
-            <p className="mt-1 text-sm text-white/40">
+            <h1
+              className="text-3xl font-bold"
+              style={{ color: "var(--text-primary)" }}
+            >
+              Todos os Artigos
+            </h1>
+            <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
               Explore nossa coleção completa de artigos técnicos
             </p>
           </div>
           {session && (
             <Link
               href="/articles/new"
-              className="inline-flex items-center gap-2 bg-[#00d4d4] text-black text-sm font-medium px-4 py-2.5 rounded hover:bg-[#00bfbf] transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2.5 rounded transition-colors"
+              style={{ backgroundColor: "var(--cyan)", color: "#000" }}
             >
               <Plus size={14} />
               Novo Artigo
@@ -244,31 +293,41 @@ export default function ArticlesPage() {
 
         {/* Filtros */}
         <div className="flex items-center gap-3 mb-8">
-          {/* Busca */}
           <div className="relative flex-1">
             <Search
               size={14}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
+              className="absolute left-3 top-1/2 -translate-y-1/2"
+              style={{ color: "var(--text-muted)" }}
             />
             <input
               type="text"
               placeholder="Buscar artigos..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[#131619] border border-[#1e2328] text-white text-sm rounded px-3 py-2.5 pl-9 outline-none focus:border-[#00d4d4] transition-colors placeholder:text-white/20"
+              className="w-full text-sm rounded px-3 py-2.5 pl-9 outline-none transition-colors"
+              style={{
+                backgroundColor: "var(--surface)",
+                border: "1px solid var(--border)",
+                color: "var(--text-primary)",
+              }}
             />
           </div>
 
-          {/* Categoria */}
           <div className="relative">
             <Filter
               size={14}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
+              className="absolute left-3 top-1/2 -translate-y-1/2"
+              style={{ color: "var(--text-muted)" }}
             />
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="bg-[#131619] border border-[#1e2328] text-white text-sm rounded px-3 py-2.5 pl-9 outline-none focus:border-[#00d4d4] transition-colors appearance-none cursor-pointer pr-8"
+              className="text-sm rounded px-3 py-2.5 pl-9 outline-none transition-colors appearance-none cursor-pointer pr-8"
+              style={{
+                backgroundColor: "var(--surface)",
+                border: "1px solid var(--border)",
+                color: "var(--text-primary)",
+              }}
             >
               {CATEGORIES.map((c) => (
                 <option key={c} value={c}>
@@ -278,25 +337,29 @@ export default function ArticlesPage() {
             </select>
           </div>
 
-          {/* Toggle layout */}
-          <div className="flex items-center border border-[#1e2328] rounded overflow-hidden">
+          <div
+            className="flex items-center rounded overflow-hidden border"
+            style={{ borderColor: "var(--border)" }}
+          >
             <button
               onClick={() => setLayout("grid")}
-              className={`p-2.5 transition-colors ${
-                layout === "grid"
-                  ? "bg-[#00d4d4] text-black"
-                  : "bg-[#131619] text-white/40 hover:text-white"
-              }`}
+              className="p-2.5 transition-colors"
+              style={{
+                backgroundColor:
+                  layout === "grid" ? "var(--cyan)" : "var(--surface)",
+                color: layout === "grid" ? "#000" : "var(--text-muted)",
+              }}
             >
               <LayoutGrid size={16} />
             </button>
             <button
               onClick={() => setLayout("list")}
-              className={`p-2.5 transition-colors ${
-                layout === "list"
-                  ? "bg-[#00d4d4] text-black"
-                  : "bg-[#131619] text-white/40 hover:text-white"
-              }`}
+              className="p-2.5 transition-colors"
+              style={{
+                backgroundColor:
+                  layout === "list" ? "var(--cyan)" : "var(--surface)",
+                color: layout === "list" ? "#000" : "var(--text-muted)",
+              }}
             >
               <LayoutList size={16} />
             </button>
@@ -305,16 +368,22 @@ export default function ArticlesPage() {
 
         {/* Grid / List */}
         {loading ? (
-          <div className="py-32 text-center text-white/30 text-sm">
+          <div
+            className="py-32 text-center text-sm"
+            style={{ color: "var(--text-muted)" }}
+          >
             Carregando artigos...
           </div>
         ) : filtered.length === 0 ? (
           <div className="py-32 text-center">
-            <p className="text-white/30 text-sm">Nenhum artigo encontrado.</p>
+            <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+              Nenhum artigo encontrado.
+            </p>
             {session && (
               <Link
                 href="/articles/new"
-                className="mt-4 inline-block text-sm text-[#00d4d4] hover:text-[#00bfbf] transition-colors"
+                className="mt-4 inline-block text-sm transition-colors"
+                style={{ color: "var(--cyan)" }}
               >
                 Seja o primeiro a publicar →
               </Link>

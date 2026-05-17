@@ -63,21 +63,36 @@ export default function SettingsPage() {
     router.refresh();
   }
 
+  const inputStyle = {
+    backgroundColor: "var(--bg)",
+    border: "1px solid var(--border)",
+    color: "var(--text-primary)",
+  };
+
   if (fetching) {
     return (
-      <div className="min-h-screen bg-[#0d0d0d] flex items-center justify-center">
-        <p className="text-sm text-white/30">Carregando...</p>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: "var(--bg)" }}
+      >
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+          Carregando...
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d] px-6 py-10">
+    <div
+      className="min-h-screen px-6 py-10"
+      style={{ backgroundColor: "var(--bg)" }}
+    >
       <div className="mx-auto max-w-lg">
         {/* Voltar */}
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white transition-colors mb-8"
+          className="inline-flex items-center gap-1.5 text-sm transition-colors mb-8"
+          style={{ color: "var(--text-muted)" }}
         >
           <ArrowLeft size={14} />
           Voltar ao Dashboard
@@ -85,20 +100,35 @@ export default function SettingsPage() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-white">
+          <h1
+            className="text-2xl font-bold"
+            style={{ color: "var(--text-primary)" }}
+          >
             Configurações do Perfil
           </h1>
-          <p className="mt-1 text-sm text-white/40">
+          <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
             Gerencie suas informações pessoais
           </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
-          <div className="bg-[#131619] border border-[#1e2328] rounded-lg p-6 flex flex-col gap-6">
+          <div
+            className="rounded-lg p-6 flex flex-col gap-6 border"
+            style={{
+              backgroundColor: "var(--surface)",
+              borderColor: "var(--border)",
+            }}
+          >
             {/* Avatar */}
             <div className="flex flex-col items-center gap-3">
-              <div className="w-20 h-20 rounded-full bg-[#1e2328] border border-[#1e2328] overflow-hidden flex items-center justify-center">
+              <div
+                className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center border"
+                style={{
+                  backgroundColor: "var(--surface-hover)",
+                  borderColor: "var(--border)",
+                }}
+              >
                 {hasAvatar ? (
                   <img
                     src="/api/profile/avatar"
@@ -106,13 +136,19 @@ export default function SettingsPage() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-2xl font-bold text-white">
+                  <span
+                    className="text-2xl font-bold"
+                    style={{ color: "var(--text-primary)" }}
+                  >
                     {name.charAt(0).toUpperCase()}
                   </span>
                 )}
               </div>
               <div className="flex flex-col items-center gap-1.5 w-full">
-                <label className="text-xs font-medium text-white/60">
+                <label
+                  className="text-xs font-medium"
+                  style={{ color: "var(--text-muted)" }}
+                >
                   Foto de Perfil
                 </label>
                 <input
@@ -120,25 +156,36 @@ export default function SettingsPage() {
                   type="file"
                   accept="image/*"
                   onChange={() => setHasAvatar(false)}
-                  className="w-full bg-[#0d0d0d] border border-[#1e2328] text-white/60 text-xs rounded px-3 py-2 outline-none focus:border-[#00d4d4] transition-colors file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-[#1e2328] file:text-white/60 file:text-xs cursor-pointer"
+                  className="w-full text-xs rounded px-3 py-2 outline-none transition-colors cursor-pointer file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs"
+                  style={{ ...inputStyle, color: "var(--text-muted)" }}
                 />
-                <span className="text-xs text-white/25">
+                <span
+                  className="text-xs"
+                  style={{ color: "var(--text-muted)" }}
+                >
                   Adicione uma imagem ou deixe em branco
                 </span>
               </div>
             </div>
 
-            <div className="border-t border-[#1e2328]" />
+            <div
+              className="border-t"
+              style={{ borderColor: "var(--border)" }}
+            />
 
             {/* Nome */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-white/60">
+              <label
+                className="text-xs font-medium"
+                style={{ color: "var(--text-muted)" }}
+              >
                 Nome Completo
               </label>
               <div className="relative">
                 <User
                   size={13}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
+                  className="absolute left-3 top-1/2 -translate-y-1/2"
+                  style={{ color: "var(--text-muted)" }}
                 />
                 <input
                   name="name"
@@ -146,32 +193,45 @@ export default function SettingsPage() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-[#0d0d0d] border border-[#1e2328] text-white text-sm rounded px-3 py-2.5 pl-9 outline-none focus:border-[#00d4d4] transition-colors"
+                  className="w-full text-sm rounded px-3 py-2.5 pl-9 outline-none transition-colors"
+                  style={inputStyle}
                 />
               </div>
             </div>
 
             {/* Email */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-white/60">Email</label>
+              <label
+                className="text-xs font-medium"
+                style={{ color: "var(--text-muted)" }}
+              >
+                Email
+              </label>
               <div className="relative">
                 <Mail
                   size={13}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
+                  className="absolute left-3 top-1/2 -translate-y-1/2"
+                  style={{ color: "var(--text-muted)" }}
                 />
                 <input
                   name="email"
                   type="email"
                   value={email}
                   disabled
-                  className="w-full bg-[#0d0d0d] border border-[#1e2328] text-white/40 text-sm rounded px-3 py-2.5 pl-9 outline-none cursor-not-allowed"
+                  className="w-full text-sm rounded px-3 py-2.5 pl-9 outline-none cursor-not-allowed"
+                  style={{ ...inputStyle, opacity: 0.5 }}
                 />
               </div>
             </div>
 
             {/* Bio */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-white/60">Bio</label>
+              <label
+                className="text-xs font-medium"
+                style={{ color: "var(--text-muted)" }}
+              >
+                Bio
+              </label>
               <textarea
                 name="bio"
                 rows={4}
@@ -179,28 +239,55 @@ export default function SettingsPage() {
                 onChange={(e) => setBio(e.target.value)}
                 maxLength={500}
                 placeholder="Desenvolvedor Full Stack apaixonado por tecnologia e inovação."
-                className="w-full bg-[#0d0d0d] border border-[#1e2328] text-white text-sm rounded px-3 py-2.5 outline-none focus:border-[#00d4d4] transition-colors resize-none placeholder:text-white/20"
+                className="w-full text-sm rounded px-3 py-2.5 outline-none transition-colors resize-none"
+                style={inputStyle}
               />
-              <span className="text-xs text-white/25">
+              <span className="text-xs" style={{ color: "var(--text-muted)" }}>
                 {bio.length}/500 caracteres
               </span>
             </div>
 
-            <div className="border-t border-[#1e2328]" />
+            <div
+              className="border-t"
+              style={{ borderColor: "var(--border)" }}
+            />
 
             {/* Info da conta */}
             <div className="flex flex-col gap-3">
-              <h3 className="text-xs font-semibold text-white">
+              <h3
+                className="text-xs font-semibold"
+                style={{ color: "var(--text-primary)" }}
+              >
                 Informações da conta
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs text-white/40 mb-1">Tipo de conta</p>
-                  <p className="text-sm text-white">Admin</p>
+                  <p
+                    className="text-xs mb-1"
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    Tipo de conta
+                  </p>
+                  <p
+                    className="text-sm"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    Admin
+                  </p>
                 </div>
                 <div>
-                  <p className="text-xs text-white/40 mb-1">Membro desde</p>
-                  <p className="text-sm text-white">{createdAt}</p>
+                  <p
+                    className="text-xs mb-1"
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    Membro desde
+                  </p>
+                  <p
+                    className="text-sm"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    {createdAt}
+                  </p>
                 </div>
               </div>
             </div>
@@ -220,7 +307,8 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-[#00d4d4] text-black text-sm font-medium rounded hover:bg-[#00bfbf] transition-colors disabled:opacity-50"
+              className="w-full py-2.5 text-sm font-medium rounded transition-colors disabled:opacity-50"
+              style={{ backgroundColor: "var(--cyan)", color: "#000" }}
             >
               {loading ? "Salvando..." : "Salvar Alterações"}
             </button>

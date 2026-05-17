@@ -19,20 +19,19 @@ async function getDashboardData(userId: string) {
     orderBy: { publishedAt: "desc" },
     include: { author: { select: { id: true, name: true } } },
   });
-
   return { articles };
 }
 
 export default async function DashboardPage() {
   const session = await auth();
-
   if (!session) redirect("/login");
 
   const { articles } = await getDashboardData(session.user.id);
 
-  const totalWordCount = articles.reduce((acc, a) => {
-    return acc + a.content.trim().split(/\s+/).length;
-  }, 0);
+  const totalWordCount = articles.reduce(
+    (acc, a) => acc + a.content.trim().split(/\s+/).length,
+    0,
+  );
   const avgReadTime =
     articles.length > 0
       ? Math.max(1, Math.ceil(totalWordCount / articles.length / 200))
@@ -50,27 +49,37 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
+    <div className="min-h-screen" style={{ backgroundColor: "var(--bg)" }}>
       <div className="mx-auto max-w-7xl px-6 py-12">
         {/* Header */}
         <div className="flex items-start justify-between mb-10">
           <div>
-            <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-            <p className="mt-1 text-sm text-white/40">
+            <h1
+              className="text-3xl font-bold"
+              style={{ color: "var(--text-primary)" }}
+            >
+              Dashboard
+            </h1>
+            <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
               Bem-vindo de volta, {session.user.name}!
             </p>
           </div>
           <div className="flex items-center gap-3">
             <Link
               href="/settings"
-              className="inline-flex items-center gap-2 border border-[#1e2328] text-white/70 text-sm px-4 py-2.5 rounded hover:bg-[#131619] transition-colors"
+              className="inline-flex items-center gap-2 text-sm px-4 py-2.5 rounded transition-colors border"
+              style={{
+                borderColor: "var(--border)",
+                color: "var(--text-secondary)",
+              }}
             >
               <Settings size={14} />
               Configurações
             </Link>
             <Link
               href="/articles/new"
-              className="inline-flex items-center gap-2 bg-[#00d4d4] text-black text-sm font-medium px-4 py-2.5 rounded hover:bg-[#00bfbf] transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2.5 rounded transition-colors"
+              style={{ backgroundColor: "var(--cyan)", color: "#000" }}
             >
               <Plus size={14} />
               Novo Artigo
@@ -83,13 +92,25 @@ export default async function DashboardPage() {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="bg-[#131619] border border-[#1e2328] rounded-lg p-5 flex flex-col gap-4"
+              className="rounded-lg p-5 flex flex-col gap-4 border"
+              style={{
+                backgroundColor: "var(--surface)",
+                borderColor: "var(--border)",
+              }}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs text-white/40">{stat.label}</span>
-                <stat.icon size={16} className="text-white/20" />
+                <span
+                  className="text-xs"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  {stat.label}
+                </span>
+                <stat.icon size={16} style={{ color: "var(--text-muted)" }} />
               </div>
-              <span className="text-3xl font-bold text-white">
+              <span
+                className="text-3xl font-bold"
+                style={{ color: "var(--text-primary)" }}
+              >
                 {stat.value}
               </span>
             </div>
@@ -99,25 +120,40 @@ export default async function DashboardPage() {
         {/* Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Meus Artigos */}
-          <div className="lg:col-span-2 bg-[#131619] border border-[#1e2328] rounded-lg overflow-hidden">
-            <div className="px-5 py-4 border-b border-[#1e2328]">
-              <h2 className="text-sm font-bold text-white">Meus Artigos</h2>
+          <div
+            className="lg:col-span-2 rounded-lg overflow-hidden border"
+            style={{
+              backgroundColor: "var(--surface)",
+              borderColor: "var(--border)",
+            }}
+          >
+            <div
+              className="px-5 py-4 border-b"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <h2
+                className="text-sm font-bold"
+                style={{ color: "var(--text-primary)" }}
+              >
+                Meus Artigos
+              </h2>
             </div>
 
             {articles.length === 0 ? (
               <div className="py-16 text-center">
-                <p className="text-sm text-white/30">
+                <p className="text-sm" style={{ color: "var(--text-muted)" }}>
                   Você ainda não publicou nenhum artigo.
                 </p>
                 <Link
                   href="/articles/new"
-                  className="mt-3 inline-block text-sm text-[#00d4d4] hover:text-[#00bfbf] transition-colors"
+                  className="mt-3 inline-block text-sm transition-colors"
+                  style={{ color: "var(--cyan)" }}
                 >
                   Publicar primeiro artigo →
                 </Link>
               </div>
             ) : (
-              <div className="divide-y divide-[#1e2328]">
+              <div>
                 {articles.map((article) => {
                   const date = new Date(article.publishedAt).toLocaleDateString(
                     "pt-BR",
@@ -131,7 +167,8 @@ export default async function DashboardPage() {
                   return (
                     <div
                       key={article.id}
-                      className="flex items-center gap-4 px-5 py-4 hover:bg-[#1a1f24] transition-colors"
+                      className="flex items-center gap-4 px-5 py-4 transition-colors border-t first:border-t-0"
+                      style={{ borderColor: "var(--border)" }}
                     >
                       {/* Thumb */}
                       <div className="w-16 h-12 shrink-0 rounded overflow-hidden">
@@ -154,14 +191,23 @@ export default async function DashboardPage() {
                       {/* Info */}
                       <div className="flex-1 min-w-0">
                         <Link href={`/articles/${article.id}`}>
-                          <h3 className="text-sm font-medium text-white truncate hover:text-[#00d4d4] transition-colors">
+                          <h3
+                            className="text-sm font-medium truncate hover:opacity-70 transition-opacity"
+                            style={{ color: "var(--text-primary)" }}
+                          >
                             {article.title}
                           </h3>
                         </Link>
-                        <p className="text-xs text-white/50 truncate mt-0.5">
+                        <p
+                          className="text-xs truncate mt-0.5"
+                          style={{ color: "var(--text-muted)" }}
+                        >
                           {article.content.slice(0, 80)}...
                         </p>
-                        <div className="flex items-center gap-2 mt-1 text-xs text-white/30">
+                        <div
+                          className="flex items-center gap-2 mt-1 text-xs"
+                          style={{ color: "var(--text-muted)" }}
+                        >
                           <span>{date}</span>
                           <span>•</span>
                           <span className="flex items-center gap-1">
@@ -178,7 +224,11 @@ export default async function DashboardPage() {
                       <div className="flex flex-col gap-1.5 shrink-0">
                         <Link
                           href={`/articles/${article.id}/edit`}
-                          className="inline-flex items-center gap-1.5 text-xs border border-[#1e2328] text-white/60 px-3 py-1.5 rounded hover:bg-[#1e2328] transition-colors"
+                          className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded transition-colors border"
+                          style={{
+                            borderColor: "var(--border)",
+                            color: "var(--text-secondary)",
+                          }}
                         >
                           <Pencil size={11} />
                           Editar
@@ -193,14 +243,26 @@ export default async function DashboardPage() {
           </div>
 
           {/* Atividade Recente */}
-          <div className="bg-[#131619] border border-[#1e2328] rounded-lg overflow-hidden">
-            <div className="px-5 py-4 border-b border-[#1e2328]">
-              <h2 className="text-sm font-bold text-white">
+          <div
+            className="rounded-lg overflow-hidden border"
+            style={{
+              backgroundColor: "var(--surface)",
+              borderColor: "var(--border)",
+            }}
+          >
+            <div
+              className="px-5 py-4 border-b"
+              style={{ borderColor: "var(--border)" }}
+            >
+              <h2
+                className="text-sm font-bold"
+                style={{ color: "var(--text-primary)" }}
+              >
                 Atividade Recente
               </h2>
             </div>
 
-            <div className="divide-y divide-[#1e2328]">
+            <div>
               {[
                 {
                   name: "Marie Smith",
@@ -221,19 +283,40 @@ export default async function DashboardPage() {
                   time: "5 min atrás",
                 },
               ].map((activity, i) => (
-                <div key={i} className="flex items-start gap-3 px-5 py-4">
-                  <div className="w-8 h-8 rounded-full bg-[#1e2328] flex items-center justify-center text-xs font-bold text-white shrink-0">
+                <div
+                  key={i}
+                  className="flex items-start gap-3 px-5 py-4 border-t first:border-t-0"
+                  style={{ borderColor: "var(--border)" }}
+                >
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+                    style={{
+                      backgroundColor: "var(--surface-hover)",
+                      color: "var(--text-primary)",
+                    }}
+                  >
                     {activity.name.charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-white/70 leading-relaxed">
-                      <span className="font-medium text-white">
+                    <p
+                      className="text-xs leading-relaxed"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      <span
+                        className="font-medium"
+                        style={{ color: "var(--text-primary)" }}
+                      >
                         {activity.name}
                       </span>{" "}
                       {activity.action}{" "}
-                      <span className="text-[#00d4d4]">{activity.article}</span>
+                      <span style={{ color: "var(--cyan)" }}>
+                        {activity.article}
+                      </span>
                     </p>
-                    <p className="text-xs text-white/30 mt-1 flex items-center gap-1">
+                    <p
+                      className="text-xs mt-1 flex items-center gap-1"
+                      style={{ color: "var(--text-muted)" }}
+                    >
                       <MessageSquare size={10} />
                       {activity.time}
                     </p>
