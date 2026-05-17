@@ -11,20 +11,25 @@ export default function Footer() {
   return (
     <footer
       className="border-t mt-20"
-      style={{ backgroundColor: "var(--bg)", borderColor: "var(--border)" }}
+      style={{
+        backgroundColor: "var(--bg)",
+        borderColor: "var(--border)",
+      }}
     >
       <div className="mx-auto max-w-7xl px-6 py-12">
         <div className="flex justify-between items-start">
           {/* Brand */}
           <div className="max-w-xs">
-            <span
-              className={`${irishGrover.className} text-3xl leading-none`}
-              style={{
-                color: "var(--text-primary)",
-              }}
-            >
-              {"<M/>"}
-            </span>
+            <Link href="/">
+              <span
+                className={`${irishGrover.className} text-3xl leading-none cursor-pointer`}
+                style={{
+                  color: "var(--text-primary)",
+                }}
+              >
+                {"<M/>"}
+              </span>
+            </Link>
 
             <p
               className="mt-3 text-sm leading-relaxed"
@@ -37,6 +42,7 @@ export default function Footer() {
 
           {/* Links */}
           <div className="flex gap-16">
+            {/* Navegação */}
             <div>
               <h4
                 className="text-sm font-semibold mb-4"
@@ -46,14 +52,18 @@ export default function Footer() {
               </h4>
 
               <ul className="space-y-2">
-                {["Home", "Artigos", "Dashboard"].map((item) => (
-                  <li key={item}>
+                {[
+                  { label: "Home", href: "/" },
+                  { label: "Artigos", href: "/articles" },
+                  { label: "Dashboard", href: "/dashboard" },
+                ].map((item) => (
+                  <li key={item.label}>
                     <Link
-                      href={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+                      href={item.href}
                       className="text-sm transition-colors hover:opacity-80"
                       style={{ color: "var(--text-muted)" }}
                     >
-                      {item}
+                      {item.label}
                     </Link>
                   </li>
                 ))}
@@ -116,6 +126,7 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Copyright */}
         <div
           className="mt-10 border-t pt-6 text-center"
           style={{ borderColor: "var(--border)" }}
