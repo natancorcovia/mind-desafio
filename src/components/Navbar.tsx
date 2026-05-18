@@ -87,7 +87,7 @@ function ProfileMenu({ name, email }: { name: string; email: string }) {
             <Link
               href="/dashboard"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:opacity-80"
+              className="cursor-pointer flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:opacity-80"
               style={{ color: "var(--text-secondary)" }}
             >
               <LayoutDashboard size={15} />
@@ -107,8 +107,8 @@ function ProfileMenu({ name, email }: { name: string; email: string }) {
           {/* Sair */}
           <div className="py-1">
             <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:opacity-80"
+              onClick={() => signOut({ callbackUrl: window.location.origin })}
+              className="cursor-pointer w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:opacity-80"
               style={{ color: "var(--text-secondary)" }}
             >
               <LogOut size={15} />
